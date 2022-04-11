@@ -83,11 +83,11 @@ if __name__ == '__main__':
 		plan = Plan()
 			
 		# Starting position 
-		add_point(-0.7, -0.23, 0.363, 1.57, 0.0, 0.0, plan)
+		add_point(-0.201, -0.595, 0.375, 3.13, 0.19, 2.568, plan)
 		# Position with x, y, z + radius
-		add_point(x, y, z+radius, 1.57, 0.0, 0.0, plan)
+		add_point(x, y, z+radius, 3.13, 0.19, 2.568, plan)
 		# Back to Start
-		add_point(-0.7, -0.23, 0.363, 1.57, 0.0, 0.0, plan)
+		add_point(-0.201, -0.595, 0.375, 3.13, 0.19, 2.568, plan)
 	
 	
 		# publish the plan
@@ -95,3 +95,4 @@ if __name__ == '__main__':
 		# wait for 0.1 seconds until the next loop and repeat
 		loop_rate.sleep()
 		
+
