@@ -86,6 +86,10 @@ if __name__ == '__main__':
 		add_point(-0.201, -0.595, 0.375, 3.13, 0.19, 2.568, plan)
 		# Position with x, y, z + radius
 		add_point(x, y, z+radius, 3.13, 0.19, 2.568, plan)
+		# Turn right 
+		add_point(-0.5, -0.595, 0.375, 3.13, 0.19, 2.568, plan)
+		# Decrease z to drop ball 
+		add_point(-0.5, -0.595, z+radius, 3.13, 0.19, 2.568, plan)
 		# Back to Start
 		add_point(-0.201, -0.595, 0.375, 3.13, 0.19, 2.568, plan)
 	
@@ -95,4 +99,6 @@ if __name__ == '__main__':
 		# wait for 0.1 seconds until the next loop and repeat
 		loop_rate.sleep()
 		
+
+
 
