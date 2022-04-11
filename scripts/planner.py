@@ -40,37 +40,6 @@ def get_sphere(data):
 	sphere_radius = data.radius
 
 	
-def transform_to_base(sphere_x, sphere_y, sphere_z, radius):
-	# add a ros transform listener
-	tfBuffer = tf2_ros.Buffer()
-	listener = tf2_ros.TransformListener(tfBuffer)
-	
-	# set a 10Hz frequency for this loop
-	loop_rate = rospy.Rate(10)
-	
-	while not rospy.is_shutdown():
-		try:
-			trans = tfBuffer.lookup_transform("base", "camera_color_optical_frame", rospy.Time())
-		except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
-			print('Frames not available!!!')
-			loop_rate.sleep()
-			continue
-	
-	# Define points in camera frame
-	pt_in_cam = tf2_geometry_msgs.PointStamped()
-	pt_in_cam.header.frame_id = 'camera_color_optical_frame'
-	pt_in_cam.header.stamp = rospy.get_rostime()
-	
-	pt_in_cam.point.x = sphere_x
-	pt_in_cam.point.y = sphere_y
-	pt_in_cam.point.z = sphere_z
-	
-	# Convert points to base frame
-	pt_in_base = tfBuffer.transform(pt_in_cam,'base', rospy.Duration(1.0))
-	
-	return pt_in_base.point.x, pt_in_base.point.y, pt_in_base.point.z, radius
-
-	
 if __name__ == '__main__':
 	# Initialize the node
 	rospy.init_node('planner', anonymous = True)
@@ -83,26 +52,44 @@ if __name__ == '__main__':
 	
 	
 	while not rospy.is_shutdown():
-		trans_coords = transform_coords(sphere_x, sphere_y, sphere_z, sphere_radius)
+		tfBuffer = tf2_ros.Buffer()
+		listener = tf2_ros.TransformListener(tfBuffer)
 	
-		print("Before tranformed: ")
-		print("x: ", sphere_x, "y: ", sphere_y, "z: ", sphere_z, "radius: ", sphere_radius, "\n")
+		received = False
 	
-		x = trans_coords[0]
-		y = trans_coords[1]
-		z = trans_coords[2]
-		radius = trans_coords[3]
-	
-		print("Transformed:")
-		print("x: ", x, "y: ", y, "z: ", z, "radius: ", radius, "\n")
-	
-		plan = Plan()
+		if not received:
+			try:
+				trans = tfBuffer.lookup_transform("base", "camera_color_optical_frame", rospy.Time())
+				received = True
+			except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
+				print('Frames not available')
+				continue
+		# Define points in camera frame
+		pt_in_cam = tf2_geometry_msgs.PointStamped()
+		pt_in_cam.header.frame_id = 'camera_color_optical_frame'
+		pt_in_cam.header.stamp = rospy.get_rostime()
 		
+		pt_in_cam.point.x = sphere_x
+		pt_in_cam.point.y = sphere_y
+		pt_in_cam.point.z = sphere_z
+		
+		# Convert points to base frame
+		pt_in_base = tfBuffer.transform(pt_in_cam,'base', rospy.Duration(1.0))
+		x,y,z,radius = pt_in_base.point.x, pt_in_base.point.y, pt_in_base.point.z, sphere_radius
+		
+		print("Before tranformed: \n", "x: ", sphere_x, "y: ", sphere_y, "z: ", sphere_z, "radius: ", sphere_radius, "\n")
+		
+		print("Transformed: \n", "x: ", x, "y: ", y, "z: ", z, "radius: ", radius, "\n")
+		
+		plan = Plan()
+			
 		# Starting position 
 		add_point(-0.7, -0.23, 0.363, 1.57, 0.0, 0.0, plan)
+		# Position with x, y, z + radius
 		add_point(x, y, z+radius, 1.57, 0.0, 0.0, plan)
-
+	
 		# publish the plan
 		plan_pub.publish(plan)
 		# wait for 0.1 seconds until the next loop and repeat
 		loop_rate.sleep()
+
