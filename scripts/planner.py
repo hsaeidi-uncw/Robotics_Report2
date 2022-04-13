@@ -47,6 +47,10 @@ if __name__ == '__main__':
 	rospy.Subscriber('sphere_params', SphereParams, get_sphere)
 	# Publisher for sending joint positions
 	plan_pub = rospy.Publisher('/plan', Plan, queue_size = 10)
+	# Subscribers to cancel plan 
+	rqt_toggle = rospy.Subscriber("/rqt_toggle", Bool, rqt_listener)
+	# Subscriber to pause plan 
+	pause_toggle = rospy.Subscriber("/pause_toggle", Bool, rqt_listener)
 	# Set a 10Hz frequency
 	loop_rate = rospy.Rate(10)
 	
