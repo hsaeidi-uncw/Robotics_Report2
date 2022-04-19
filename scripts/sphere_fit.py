@@ -68,33 +68,41 @@ if __name__ == '__main__':
 	fil_in = [0.0, 0.0, 0.0, 0.0]
 	fil_out = [0.0, 0.0, 0.2, 0.02]
 	fil_gain = 0.2
-
+	first = True 
+	
 	while not rospy.is_shutdown():
 		if data_done: 
-			# filter xc
-			fil_in[0] = sphere_data.xc
-			fil_out[0] = fil_gain*fil_in[0] + (1 - fil_gain)*fil_out[0]
-			# replace data with filtered data
-			sphere_data.xc = fil_out[0]
-			
-			# filter yc
-			fil_in[1] = sphere_data.yc
-			fil_out[1] = fil_gain*fil_in[1] + (1 - fil_gain)*fil_out[1]
-			# replace data with filtered data
-			sphere_data.yc = fil_out[1]
-			
-			# filter zc
-			fil_in[2] = sphere_data.zc
-			fil_out[2] = fil_gain*fil_in[2] + (1 - fil_gain)*fil_out[2]
-			# replace data with filtered data
-			sphere_data.zc = fil_out[2]
-			
-			# filter radius
-			fil_in[3] = sphere_data.radius
-			fil_out[3] = fil_gain*fil_in[3] + (1 - fil_gain)*fil_out[3]
-			# replace data with filtered data
-			sphere_data.radius = fil_out[3]
-			
-			# Pulish the shere parameters 
-			sphere_pub.publish(sphere_data)
+			if first:
+				fil_out[0] = sphere_data.xc
+				fil_out[1] = sphere_data.yc
+				fil_out[2] = sphere_data.zc
+				fil_out[3] = sphere_data.radius
+				first = False 
+			else: 
+				# filter xc
+				fil_in[0] = sphere_data.xc
+				fil_out[0] = fil_gain*fil_in[0] + (1 - fil_gain)*fil_out[0]
+				# replace data with filtered data
+				sphere_data.xc = fil_out[0]
+
+				# filter yc
+				fil_in[1] = sphere_data.yc
+				fil_out[1] = fil_gain*fil_in[1] + (1 - fil_gain)*fil_out[1]
+				# replace data with filtered data
+				sphere_data.yc = fil_out[1]
+
+				# filter zc
+				fil_in[2] = sphere_data.zc
+				fil_out[2] = fil_gain*fil_in[2] + (1 - fil_gain)*fil_out[2]
+				# replace data with filtered data
+				sphere_data.zc = fil_out[2]
+
+				# filter radius
+				fil_in[3] = sphere_data.radius
+				fil_out[3] = fil_gain*fil_in[3] + (1 - fil_gain)*fil_out[3]
+				# replace data with filtered data
+				sphere_data.radius = fil_out[3]
+
+				# Pulish the shere parameters 
+				sphere_pub.publish(sphere_data)
 		rate.sleep()
