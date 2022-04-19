@@ -8,12 +8,15 @@ import tf2_geometry_msgs
 from robot_vision_lectures.msg import SphereParams 
 from ur5e_control.msg import Plan
 from geometry_msgs.msg import Twist
+from std_msgs.msg import Bool  
 
 sphere_x = 0
 sphere_y = 0
 sphere_z = 0
 sphere_radius = 0 
 recieved_sphere_data = False 
+rqt_toggle = False
+pause_toggle = False
 
 # Adds points to plan
 def add_point(linearX, linearY, linearZ, angularX, angularY, angularZ, plan):
@@ -41,6 +44,16 @@ def get_sphere(data):
 	sphere_radius = data.radius
 	recieved_sphere_data = True 
 	
+def rqt_listener(data):
+	global rqt_toggle
+	rqt_toggle = data.data
+	
+
+def pause_listener(data):
+	global pause_toggle
+	pause_toggle = data.data
+	
+	
 if __name__ == '__main__':
 	# Initialize the node
 	rospy.init_node('planner', anonymous = True)
@@ -51,7 +64,7 @@ if __name__ == '__main__':
 	# Subscribers to cancel plan 
 	rqt_toggle = rospy.Subscriber("/rqt_toggle", Bool, rqt_listener)
 	# Subscriber to pause plan 
-	pause_toggle = rospy.Subscriber("/pause_toggle", Bool, rqt_listener)
+	pause_toggle = rospy.Subscriber("/pause_toggle", Bool, pause_listener)
 	# Set a 10Hz frequency
 	loop_rate = rospy.Rate(10)
 	
@@ -59,7 +72,7 @@ if __name__ == '__main__':
 		# add a ros transform listener
 		tfBuffer = tf2_ros.Buffer()
 		listener = tf2_ros.TransformListener(tfBuffer)
-		if recieved_sphere_data: 
+		if True: 
 			# try getting the most update transformation between the camera frame and the base frame
 			try:
 				trans = tfBuffer.lookup_transform("base", "camera_color_optical_frame", rospy.Time())
@@ -98,15 +111,17 @@ if __name__ == '__main__':
 			# Back to Start
 			add_point(-0.201, -0.595, 0.375, 3.13, 0.19, 2.568, plan)
 			# If not cancelled 
-			if not rqt_toggle:
+			# if not rqt_toggle:
 				# publish the plan
-				plan_pub.publish(plan)
+			plan_pub.publish(plan)
 			# If plan pause publish blank plan
-			if pause_toggle: 
-				plan_pub.publish(Plan())
+			#if pause_toggle: 
+				#plan_pub.publish(Plan())
 			# wait for 0.1 seconds until the next loop and repeat
 			loop_rate.sleep()
 		
+
+
 
 
 
