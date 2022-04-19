@@ -100,16 +100,18 @@ if __name__ == '__main__':
 			# Define plan
 			plan = Plan()
 
+			roll, pitch, yaw = 3.126, 0.0166, 1.530
 			# Starting position 
-			add_point(-0.201, -0.595, 0.375, 3.13, 0.19, 2.568, plan)
+			add_point(-0.0143, -0.408, 0.274, roll, pitch, yaw, plan)
 			# Position with x, y, z + radius
-			add_point(x, y, z+radius, 3.13, 0.19, 2.568, plan)
+			add_point(x, y, z+.15, roll, pitch, yaw, plan)
+			add_point(x, y, z+.02, roll, pitch, yaw, plan)
 			# Turn right 
-			add_point(-0.5, -0.595, 0.375, 3.13, 0.19, 2.568, plan)
+			add_point(0.4, -0.40, 0.274, roll, pitch, yaw, plan)
 			# Decrease z to drop ball 
-			add_point(-0.5, -0.595, z+radius, 3.13, 0.19, 2.568, plan)
+			add_point(0.4, -0.40, z+.15, roll, pitch, yaw, plan)
 			# Back to Start
-			add_point(-0.201, -0.595, 0.375, 3.13, 0.19, 2.568, plan)
+			# add_point(-0.0143, -0.408, 0.274, roll, pitch, yaw, plan)
 			# If not cancelled 
 			# if not rqt_toggle:
 				# publish the plan
@@ -120,7 +122,6 @@ if __name__ == '__main__':
 			# wait for 0.1 seconds until the next loop and repeat
 			loop_rate.sleep()
 		
-
 
 
 
